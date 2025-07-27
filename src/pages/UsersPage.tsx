@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import ActionCable from 'actioncable';
+import '../index.css'; // Importando o CSS global
+
+
 
 // 1. Definir uma interface para o usuário. Isso é crucial para aproveitar o TypeScript.
 interface User {

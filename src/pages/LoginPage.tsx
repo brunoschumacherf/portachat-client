@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../index.css'; // Importando o CSS global
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
