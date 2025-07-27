@@ -1,10 +1,12 @@
 // src/contexts/AuthContext.tsx
-import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { createContext, useState, useContext, type ReactNode } from 'react';
 
 // Defina as interfaces
 interface AuthContextType {
   token: string | null;
-  user: { name: string; email: string; access_level: string } | null;
+  user: {
+    id: number; name: string; email: string; access_level: string 
+} | null;
   login: (token: string, userData: any) => void;
   logout: () => void;
   isAuthenticated: boolean;
