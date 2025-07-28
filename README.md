@@ -115,7 +115,3 @@ Abra uma issue ou envie um pull request com melhorias ou correções.
 
 Este projeto está licenciado sob os termos da [MIT License](LICENSE).
 
-```
-
-Se quiser adicionar badges de CI, status do Vercel, ou links para Figma/design, posso complementar. Deseja que eu una os dois `README.md` num único monorepo também?
-```
