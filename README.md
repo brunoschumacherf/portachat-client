@@ -91,7 +91,7 @@ npm run preview
 
 ## 🔌 Conexão com o Backend
 
-Para funcionar corretamente, o backend (**Nexus API**) deve estar rodando.
+Para funcionar corretamente, o backend (**PortaChat API**) deve estar rodando.
 O cliente se conectará à URL definida em `VITE_API_URL` no arquivo `.env.local`.
 
 ---
@@ -101,15 +101,6 @@ O cliente se conectará à URL definida em `VITE_API_URL` no arquivo `.env.local
 A aplicação está disponível em produção na Vercel:
 
 🔗 **[https://portachat-client.vercel.app/](https://portachat-client.vercel.app/)**
-
----
-
-## 🧑‍💻 Contribuição
-
-Contribuições são bem-vindas!
-Abra uma issue ou envie um pull request com melhorias ou correções.
-
----
 
 ## 📝 Licença
 
