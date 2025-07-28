@@ -17,7 +17,8 @@ export const MessageArea = ({ roomId }: MessageAreaProps) => {
     api.get<Message[]>(`/rooms/${roomId}/messages`).then(response => {
       setMessages(response.data);
     });
-    const cable = ActionCable.createConsumer('ws://localhost:3000/cable');
+    const url = import.meta.env.VITE_API_URL || 'http://localhost:3000/cable';
+    const cable = ActionCable.createConsumer('ws://' + url);
     const subscription = cable.subscriptions.create(
       { channel: 'RoomChannel', id: roomId },
       {

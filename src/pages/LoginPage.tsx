@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import axios from 'axios';
+import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import '../index.css';
+import axios from 'axios';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -13,7 +14,7 @@ export const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/api/v1/auth/login', { email, password });
+      const response = await api.post('/auth/login', { email, password });
       login(response.data.token, response.data.user);
       navigate('/users');
     } catch (error) {
