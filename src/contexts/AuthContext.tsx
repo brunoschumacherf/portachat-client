@@ -1,7 +1,5 @@
-// src/contexts/AuthContext.tsx
 import { createContext, useState, useContext, type ReactNode } from 'react';
 
-// Defina as interfaces
 interface AuthContextType {
   token: string | null;
   user: {

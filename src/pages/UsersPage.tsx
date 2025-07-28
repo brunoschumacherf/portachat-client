@@ -1,13 +1,8 @@
-// src/pages/UsersPage.tsx
 import { useEffect, useState } from 'react';
-import api from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
 import ActionCable from 'actioncable';
-import '../index.css'; // Importando o CSS global
+import { useAuth } from '../contexts/AuthContext';
+import api from '../services/api';
 
-
-
-// 1. Definir uma interface para o usuário. Isso é crucial para aproveitar o TypeScript.
 interface User {
   id: number;
   name: string;
@@ -16,29 +11,46 @@ interface User {
   status: 'active' | 'inactive';
 }
 
+interface SortConfig {
+  key: keyof User;
+  direction: 'asc' | 'desc';
+}
+
 export const UsersPage = () => {
-  // Use a interface User para tipar o estado
   const [users, setUsers] = useState<User[]>([]);
-  const { user: loggedInUser, logout } = useAuth(); // Renomear para evitar conflito de nome
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'name', direction: 'asc' });
+  const { user: loggedInUser, logout } = useAuth();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get<User[]>('/users'); // Tipar a resposta da API
+        const params = new URLSearchParams({
+          'q[s]': `${sortConfig.key} ${sortConfig.direction}`,
+          'q[name_or_email_cont]': searchTerm,
+        });
+
+        const response = await api.get<User[]>(`/users?${params.toString()}`);
         setUsers(response.data);
       } catch (error) {
-        console.error("Failed to fetch users", error);
-        // Considere notificar o usuário sobre a falha, talvez com um toast.
+        console.error("Falha ao buscar usuários:", error);
       }
     };
-    fetchUsers();
 
+    const debounceFetch = setTimeout(() => {
+      fetchUsers();
+    }, 300);
+
+    return () => clearTimeout(debounceFetch);
+  }, [searchTerm, sortConfig]);
+
+  useEffect(() => {
     const cable = ActionCable.createConsumer('ws://localhost:3000/cable');
+
     const subscription = cable.subscriptions.create('UsersChannel', {
       received: (data: { type: string; payload: User }) => {
         if (data.type === 'NEW_USER') {
           setUsers(currentUsers => {
-            // 4. Prevenir a adição de usuários duplicados (caso a notificação chegue antes do fetch terminar)
             if (currentUsers.some(u => u.id === data.payload.id)) {
               return currentUsers;
             }
@@ -52,13 +64,12 @@ export const UsersPage = () => {
       subscription.unsubscribe();
       cable.disconnect();
     };
-  }, []); // O array de dependências vazio está correto aqui.
+  }, []); 
 
   const handleInactivate = async (userIdToInactivate: number) => {
     if (window.confirm('Tem certeza que deseja inativar este usuário?')) {
       try {
         await api.delete(`/users/${userIdToInactivate}`);
-        // 3. Atualizar o estado em vez de remover, para refletir a inativação
         setUsers(currentUsers =>
           currentUsers.map(u =>
             u.id === userIdToInactivate ? { ...u, status: 'inactive' } : u
@@ -70,35 +81,62 @@ export const UsersPage = () => {
     }
   };
 
+  const handleSort = (key: keyof User) => {
+    setSortConfig(currentConfig => ({
+      key,
+      direction: currentConfig.key === key && currentConfig.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
   const isAdmin = loggedInUser?.access_level === 'admin';
+
+  const SortIndicator = ({ columnKey }: { columnKey: keyof User }) => {
+    if (sortConfig.key !== columnKey) return null;
+    return sortConfig.direction === 'asc' ? ' ▲' : ' ▼';
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <div className="container mx-auto p-6">
-        <header className="flex justify-between items-center mb-6">
+      <div className="container mx-auto p-4 md:p-6">
+        <header className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <h1 className="text-3xl font-bold text-gray-800">Gerenciamento de Usuários</h1>
           <button
             onClick={logout}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition-colors"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition-colors w-full md:w-auto"
           >
             Sair
           </button>
         </header>
 
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Buscar por nome ou email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div className="bg-white rounded-lg shadow overflow-x-auto">
           <table className="min-w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('name')}>
+                  Nome<SortIndicator columnKey="name" />
+                </th>
+                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('email')}>
+                  Email<SortIndicator columnKey="email" />
+                </th>
+                <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
                 {isAdmin && <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {users.map((user) => (
-                // 5. Adicionar estilo para usuários inativos
-                <tr key={user.id} className={user.status === 'inactive' ? 'bg-gray-100 text-gray-400' : ''}>
+                <tr key={user.id} className={user.status === 'inactive' ? 'bg-gray-100 text-gray-500' : 'hover:bg-gray-50'}>
                   <td className="py-4 px-4 whitespace-nowrap">{user.name}</td>
                   <td className="py-4 px-4 whitespace-nowrap">{user.email}</td>
                   <td className="py-4 px-4 whitespace-nowrap">
@@ -106,14 +144,13 @@ export const UsersPage = () => {
                       {user.status === 'active' ? 'Ativo' : 'Inativo'}
                     </span>
                   </td>
-                  {/* 2. A lógica de autorização deve usar o usuário LOGADO (isAdmin) */}
                   {isAdmin && (
                     <td className="py-4 px-4 whitespace-nowrap">
-                      {/* Impede que o admin se auto-inactive */}
                       {loggedInUser.id !== user.id && user.status === 'active' && (
                         <button
                           onClick={() => handleInactivate(user.id)}
                           className="text-red-600 hover:text-red-900 font-medium transition-colors"
+                          aria-label={`Inativar usuário ${user.name}`}
                         >
                           Inativar
                         </button>

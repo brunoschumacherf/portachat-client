@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../index.css'; // Importando o CSS global
+import '../index.css';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -15,14 +15,12 @@ export const LoginPage = () => {
     try {
       const response = await axios.post('http://localhost:3000/api/v1/auth/login', { email, password });
       login(response.data.token, response.data.user);
-      navigate('/users'); // Redireciona para a lista de usuários após o login
+      navigate('/users');
     } catch (error) {
       console.error("Login failed", error);
-      // Adicionar feedback de erro para o usuário
     }
   };
 
-  // Formulário de login com Tailwind CSS...
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
       <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded shadow-md w-80">
