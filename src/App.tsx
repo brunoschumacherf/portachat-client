@@ -34,7 +34,7 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/chat" />} />
+          <Route path="*" element={<Navigate to="/users" />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

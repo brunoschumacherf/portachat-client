@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'; // 1. Importar o Link para navegação
-import ActionCable from 'actioncable';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 import type { User } from '../types';
@@ -37,28 +36,6 @@ export const UsersPage = () => {
 
     return () => clearTimeout(debounceFetch);
   }, [searchTerm, sortConfig]);
-
-  useEffect(() => {
-    const cable = ActionCable.createConsumer('ws://localhost:3000/cable');
-
-    const subscription = cable.subscriptions.create('UsersChannel', {
-      received: (data: { type: string; payload: User }) => {
-        if (data.type === 'NEW_USER') {
-          setUsers(currentUsers => {
-            if (currentUsers.some(u => u.id === data.payload.id)) {
-              return currentUsers;
-            }
-            return [data.payload, ...currentUsers];
-          });
-        }
-      },
-    });
-
-    return () => {
-      subscription.unsubscribe();
-      cable.disconnect();
-    };
-  }, []);
 
   const handleInactivate = async (userIdToInactivate: number) => {
     if (window.confirm('Tem certeza que deseja inativar este usuário?')) {
