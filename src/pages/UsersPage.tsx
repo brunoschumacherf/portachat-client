@@ -1,15 +1,9 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom'; // 1. Importar o Link para navegação
 import ActionCable from 'actioncable';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  access_level: 'member' | 'admin';
-  status: 'active' | 'inactive';
-}
+import type { User } from '../types';
 
 interface SortConfig {
   key: keyof User;
@@ -64,7 +58,7 @@ export const UsersPage = () => {
       subscription.unsubscribe();
       cable.disconnect();
     };
-  }, []); 
+  }, []);
 
   const handleInactivate = async (userIdToInactivate: number) => {
     if (window.confirm('Tem certeza que deseja inativar este usuário?')) {
@@ -100,12 +94,20 @@ export const UsersPage = () => {
       <div className="container mx-auto p-4 md:p-6">
         <header className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <h1 className="text-3xl font-bold text-gray-800">Gerenciamento de Usuários</h1>
-          <button
-            onClick={logout}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition-colors w-full md:w-auto"
-          >
-            Sair
-          </button>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/chat"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition-colors"
+            >
+              Ir para Chats
+            </Link>
+            <button
+              onClick={logout}
+              className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition-colors"
+            >
+              Sair
+            </button>
+          </div>
         </header>
 
         <div className="mb-4">
