@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import type { Message } from '../types';
 import api from '../services/api';
-import ActionCable from 'actioncable';
+import cable from '../services/cable';
 import { MessageInput } from '../pages/MessageInput';
 
 interface MessageAreaProps {
@@ -17,8 +17,6 @@ export const MessageArea = ({ roomId }: MessageAreaProps) => {
     api.get<Message[]>(`/rooms/${roomId}/messages`).then(response => {
       setMessages(response.data);
     });
-    const url = import.meta.env.VITE_API_URL || 'http://localhost:3000/cable';
-    const cable = ActionCable.createConsumer('ws://' + url);
     const subscription = cable.subscriptions.create(
       { channel: 'RoomChannel', id: roomId },
       {
