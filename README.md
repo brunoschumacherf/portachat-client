@@ -1,70 +1,121 @@
-# React + TypeScript + Vite
+# PortaChat Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend da aplicação de chat interno, construído com **React**, **TypeScript** e **Vite**.  
+Esta Single Page Application (SPA) consome a **Nexus API** para fornecer uma interface de usuário moderna e reativa para a troca de mensagens em tempo real.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Funcionalidades
 
-## Expanding the ESLint configuration
+- Interface reativa e moderna com Tailwind CSS
+- Comunicação em tempo real via **WebSockets** (Action Cable)
+- Autenticação de usuário e gerenciamento de sessão
+- Rotas protegidas (apenas usuários autenticados)
+- Criação de salas de chat e envio de mensagens
+- Lista de usuários com opção de iniciar conversas diretas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🧰 Tecnologias
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- **React 18+**
+- **Vite**
+- **TypeScript**
+- **Tailwind CSS**
+- **Axios** (requisições HTTP)
+- **Action Cable JS** (WebSockets)
+- **React Router**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## ⚙️ Configuração do Ambiente Local
+
+### 📦 Pré-requisitos
+
+- Node.js (v18 ou superior)
+- npm ou yarn
+
+### 🛠️ Passos para Configuração
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/seu-usuario/portachat-client.git
+cd portachat-client
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Instale as dependências:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+# ou
+yarn install
 ```
-# portachat-client
+
+3. Crie o arquivo `.env.local` na raiz do projeto:
+
+```env
+# .env.local
+VITE_API_URL=http://localhost:3000
+```
+
+> ⚠️ Esse arquivo **não deve ser versionado** no Git.
+
+---
+
+## 💻 Comandos Essenciais
+
+### Iniciar o servidor de desenvolvimento:
+
+```bash
+npm run dev
+```
+
+A aplicação estará disponível em: [http://localhost:5173](http://localhost:5173)
+
+### Build para produção:
+
+```bash
+npm run build
+```
+
+Gera os arquivos otimizados em `dist/`.
+
+### Pré-visualizar o build de produção:
+
+```bash
+npm run preview
+```
+
+---
+
+## 🔌 Conexão com o Backend
+
+Para funcionar corretamente, o backend (**Nexus API**) deve estar rodando.
+O cliente se conectará à URL definida em `VITE_API_URL` no arquivo `.env.local`.
+
+---
+
+## 🚀 Deploy
+
+A aplicação está disponível em produção na Vercel:
+
+🔗 **[https://portachat-client.vercel.app/](https://portachat-client.vercel.app/)**
+
+---
+
+## 🧑‍💻 Contribuição
+
+Contribuições são bem-vindas!
+Abra uma issue ou envie um pull request com melhorias ou correções.
+
+---
+
+## 📝 Licença
+
+Este projeto está licenciado sob os termos da [MIT License](LICENSE).
+
+```
+
+Se quiser adicionar badges de CI, status do Vercel, ou links para Figma/design, posso complementar. Deseja que eu una os dois `README.md` num único monorepo também?
+```
